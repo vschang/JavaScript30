@@ -58,6 +58,36 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
+function playSound(x){
+  // select the audio by its data attribute
+  // find the variable that lives in the function x and get its key code
+  // get the audio because you want it to play the sound
+  const audio = document.querySelector(`audio[data-key="${x.keyCode}"]`);
+  // get the key by selecting the class=key because you want it to animate
+  const key = document.querySelector(`.key[data-key="${x.keyCode}"]`);
+  if (!audio) return; //if the key doesn't have an audio stop the function
+  audio.currentTime = 0; //rewinds sound to the beginning so when you press the key, it will start again
+  audio.play();
+  // add the class 'playing' to the key once clicked
+  key.classList.add('playing');
+}
+
+function removeTransition(x) {
+  if (x.propertyName !== 'transform') return; //if the transition name is not transform, end the function
+  console.log(x.propertyName);
+  //this == key because 'this' is always == to the element that the event listener is called on
+  //removes the class='playing' when the transition ends
+  this.classList.remove('playing')
+}
+
+// selecting all the keys
+const keys = document.querySelectorAll('.key');
+// we have to iterate because its a node list not an array
+// adding the event listener 'transitionend' to each key and removing the transition
+keys.forEach(key => key.addEventListener('transitionend', removeTransition));
+
+// the event listener when the key is pressed
+window.addEventListener('keydown', playSound);
 
 </script>
 

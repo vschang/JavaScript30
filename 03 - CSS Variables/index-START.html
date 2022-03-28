@@ -9,7 +9,7 @@
 
   <div class="controls">
     <label for="spacing">Spacing:</label>
-    <input id="spacing" type="range" name="spacing" min="10" max="200" value="10" data-sizing="px">
+    <input id="spacing" type="range" name="spacing" min="10" max="200" value="10" data-sizing="px" data-name="valiere">
 
     <label for="blur">Blur:</label>
     <input id="blur" type="range" name="blur" min="0" max="25" value="10" data-sizing="px">
@@ -25,6 +25,22 @@
     /*
       misc styles, nothing to do with CSS variables
     */
+
+    :root {
+      --spacing: 10px;
+      --base: #ffffff;
+      --blur: 10px;
+    }
+
+    img {
+      background: var(--base);
+      filter: blur(var(--blur));
+      padding: var(--spacing);
+    }
+
+    h1{
+      color: var(--base);
+    }
 
     body {
       text-align: center;
@@ -45,6 +61,23 @@
   </style>
 
   <script>
+    const inputs = document.querySelectorAll('.controls input')
+
+    function handleUpdate() {
+      // get the suffix from the dataset and the data attribute 'data-sizing'
+      // OR nothing becuase you don't want it to return undefined
+      const suffix = this.dataset.sizing || '';
+      // select the variable by calling its name and interpolate it as the variable which is set as its value
+      // you need to add the suffix to the end because
+      // this will change the value of the variables but it doesn't translate to changes on the screen without the suffix
+      document.documentElement.style.setProperty(`--${this.name}`, this.value + suffix);
+
+    }
+
+    // listen for a change event on the input and when a change event is heard the handleUpdate function is called
+    inputs.forEach(input => input.addEventListener('change', handleUpdate));
+    // listen for a mouse move because the change event alone is only changed when you let go of the mouse
+    inputs.forEach(input => input.addEventListener('mousemove', handleUpdate));
   </script>
 
 </body>
