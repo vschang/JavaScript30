@@ -17,6 +17,51 @@
 <script>
 const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
+const cities = []
+
+fetch(endpoint) //
+  .then(blob => blob.json()) //turn the raw data into a .json
+  .then(data => cities.push(...data)) //push data into cities but use ... so it doesn't insert as an array inside an array
+
+  // a function that takes a word and the cities array as arguments
+function findMatches(wordToMatch, cities) {
+  return cities.filter(place => {
+    const regex = new RegExp(wordToMatch, 'gi') //g = global (will be tested against all possible matches in a string), i = case insensitive
+    return place.city.match(regex) || place.state.match(regex) //will return the city or state matching the regex
+  });
+};
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// is called any time the value in the input box is changed
+function displayMatches() {
+  const matchArray = findMatches(this.value, cities); //this.value === input typed into input form
+  const html = matchArray.map(place => { //turn the match array in to a list of the results
+    const regex = new RegExp(this.value, 'gi') //match the input
+    const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`) //replace the search input with the same but highlighted text
+    const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`) //replace the search input with the same but highlighted text
+    return `
+    <li>
+      <span class="name">${cityName}, ${stateName}</span>
+      <span class="population">${numberWithCommas(place.population)}</span>
+    </li>
+    `;
+  }).join(''); //match returns an array and we turn it into a string
+  suggestions.innerHTML = html; //get suggestions with their html\
+}
+
+const searchInput = document.querySelector('.search'); //get the search input
+const suggestions = document.querySelector('.suggestions'); //get the first ul in the list
+
+searchInput.addEventListener('change', displayMatches); //when input changes (change event occrs), we call on findMatches
+searchInput.addEventListener('keyup', displayMatches); //want findMatches to run when you type a new input
+
+///////
+//CHALLENGE - use geo location and sort cities by how close they are to you//
+//////
+
 </script>
 </body>
 </html>
