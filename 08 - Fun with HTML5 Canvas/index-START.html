@@ -7,6 +7,52 @@
 <body>
 <canvas id="draw" width="800" height="800"></canvas>
 <script>
+  const canvas = document.querySelector('#draw');
+  // grab the 'context' - it's what's used to draw on in HTML5
+  const context = canvas.getContext('2d');
+  // make the canvas the same size as the window
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  // color of the stroke
+  context.color = 'red';
+  // defining the shape of the paint stroke
+  context.lineJoin = 'round';
+  context.lineCap = 'round';
+  context.lineWidth = 100;
+  context.globalCompositeOperation = 'multiply'
+  // when your mouse is not held down, it won't paint
+  let isDrawing = false
+  // define where the end of the line is
+  let lastX = 0;
+  let lastY = 0;
+  let hue = 0;
+  let direction = true;
+  // the draw function will take an event
+  const draw = e => {
+    if (!isDrawing) return; //if the mouse is not down, stop the function
+    console.log(e);
+    context.strokeStyle = `hsl(${hue}, 100%, 50%)` //the hue will change so the stroke will be rainbow
+    context.beginPath();
+    context.moveTo(lastX, lastY); //the (x,y) the line begins at
+    context.lineTo(e.offsetX, e.offsetY); // the ending (x,y) we get from the event
+    context.stroke(); //will allow you to paint
+    // update the values of lastX, lastY
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+    hue++ //incrementing hue so it will be rainbow
+    if (hue >= 360) {
+      hue = 0;
+    }
+  };
+
+
+  canvas.addEventListener('mousedown', (e) => { // pass the event to the function
+    isDrawing = true;
+    [lastX, lastY] = [e.offsetX, e.offsetY]; // update the starting position to wherever the person clicks
+  }); // when mouse is down, start drawing
+  canvas.addEventListener('mousemove', draw); // when you move your mouse, it will call the function draw
+  canvas.addEventListener('mouseup', () => isDrawing = false); // when mouse is released, stop drawing
+  canvas.addEventListener('mouseout', () => isDrawing = false); // when mouse leaves the canvas it stops drawing
+
 </script>
 
 <style>
